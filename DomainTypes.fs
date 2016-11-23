@@ -39,6 +39,7 @@ type Field = {
     Value: FieldValue
 }
 
+[<CLIMutable>]
 type Template = {
     Id: System.Guid
     Name: string

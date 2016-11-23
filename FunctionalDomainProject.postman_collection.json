@@ -1,0 +1,63 @@
+{
+	"variables": [],
+	"info": {
+		"name": "FunctionalDomainProject",
+		"_postman_id": "5bd6be34-9326-1c4f-a962-def7ec9bc50f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create template",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setGlobalVariable(\"id\", \"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\");",
+							"postman.setGlobalVariable(\"templateName\", \"test template\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/first",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"{{id}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\":[],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get template",
+			"request": {
+				"url": "http://localhost:5000/api/first?id={{id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\tId: \"{{id}}\",\n\tName: \"TestTemplate\"\n}"
+				},
+				"description": "Get template"
+			},
+			"response": []
+		}
+	]
+}

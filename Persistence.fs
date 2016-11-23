@@ -11,11 +11,12 @@ type TemplateRepository() =
             if fakeStore.ContainsKey(id) then Some(fakeStore.[id]) else None
 
             
-
 //TODO actual command pattern... i.e. pass a command tuple (cmd-enum, data) not just the template
 type TemplateCommandHandler() =
     interface ITemplateCommandHandler with
         member this.Save (template: Template) =
-            do fakeStore.Item(template.Id) = template
+            if fakeStore.ContainsKey template.Id then 
+                fakeStore.Remove template.Id |> ignore // our lazy fakeStore 'Update'
+            fakeStore.Add(template.Id, template)
 
 

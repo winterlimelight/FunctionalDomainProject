@@ -3,15 +3,28 @@ open System.IO
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Mvc.Formatters.Json
+open Microsoft.AspNetCore.Diagnostics
 open Microsoft.Extensions.DependencyInjection
+open Newtonsoft.Json.Serialization
+
+let onJsonError (sender:obj) (args:ErrorEventArgs) =
+    Logger.error (args.ToString())
+    ()
+
 
 type Startup(env: IHostingEnvironment) =
 
     member this.ConfigureServices(services: IServiceCollection) =
-        services.AddMvc() |> ignore
+        let mvc = services.AddMvcCore()
+        mvc.AddJsonFormatters(fun serializerSettings -> 
+            serializerSettings.Error <- System.EventHandler<ErrorEventArgs>(onJsonError)
+        ) |> ignore
 
     member this.Configure (app: IApplicationBuilder) =
+        app.UseDeveloperExceptionPage() |> ignore
         app.UseMvc() |> ignore
+
 
 [<EntryPoint>]
 let main argv = 
