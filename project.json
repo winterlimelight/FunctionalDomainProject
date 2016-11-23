@@ -1,27 +1,41 @@
 {
-  "version": "1.0.0-*",
-  "buildOptions": {
-    "debugType": "portable",
-    "emitEntryPoint": true,
-    "compilerName": "fsc",
-    "compile": {
-      "includeFiles": [
-        "Program.fs"
-      ]
-    }
-  },
-  "tools": {
-    "dotnet-compile-fsc":"1.0.0-preview2-*"
-  },
-  "frameworks": {
-    "netcoreapp1.0": {
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.1"
+    "buildOptions": {
+        "debugType": "portable",
+        "emitEntryPoint": true,
+        "compilerName": "fsc",
+        "compile": {
+            "includeFiles": [
+                "Logger.fs",
+                "DomainTypes.fs",
+                "DomainInterfaces.fs",
+                "DomainOperations.fs",
+                "Persistence.fs",
+                "Controllers/FirstController.fs",
+                "Program.fs"
+            ]
         },
-        "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160629"
-      }
-    }
-  }
+        "define": []
+    },
+    "frameworks": {
+        "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.1"
+                },
+                "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-161102",
+                "Microsoft.AspNetCore.Mvc": "1.0.1",
+                "Microsoft.AspNetCore.Routing": "1.0.1",
+                "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+                "Microsoft.Extensions.Logging": "1.0.0",
+                "Microsoft.Extensions.Logging.Console": "1.0.0",
+                "Microsoft.Extensions.Logging.Debug": "1.0.0",
+                "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0"
+            }
+        }
+    },
+    "tools": {
+        "dotnet-compile-fsc": "1.0.0-preview2-*"
+    },
+    "version": "1.0.0-*"
 }

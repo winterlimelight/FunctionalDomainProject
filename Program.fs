@@ -1,8 +1,22 @@
-﻿// Learn more about F# at http://fsharp.org
+﻿open System
+open System.IO
+open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Http
+open Microsoft.Extensions.DependencyInjection
 
-open System
+type Startup(env: IHostingEnvironment) =
+
+    member this.ConfigureServices(services: IServiceCollection) =
+        services.AddMvc() |> ignore
+
+    member this.Configure (app: IApplicationBuilder) =
+        app.UseMvc() |> ignore
 
 [<EntryPoint>]
 let main argv = 
-    printfn "Hello World!"
-    0 // return an integer exit code
+    printfn "Starting"
+    Logger.info "Startup"
+    let host = WebHostBuilder().UseKestrel().UseContentRoot(Directory.GetCurrentDirectory()).UseStartup<Startup>().Build()
+    host.Run()
+    0 //exit code
