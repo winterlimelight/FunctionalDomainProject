@@ -8,9 +8,9 @@
                 "Logger.fs",
                 "DomainTypes.fs",
                 "DomainInterfaces.fs",
-                "DomainOperations.fs",
+                "DomainOperations/Template.fs",
                 "Persistence.fs",
-                "Controllers/FirstController.fs",
+                "Controllers/TemplateController.fs",
                 "Program.fs"
             ]
         },
@@ -27,6 +27,7 @@
                 "Microsoft.AspNetCore.Diagnostics": "1.1.0",
                 "Microsoft.AspNetCore.Mvc": "1.0.1",
                 "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.1",
+                "Microsoft.AspNetCore.Mvc.Abstractions": "1.0.1",
                 "Microsoft.AspNetCore.Routing": "1.0.1",
                 "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
                 "Microsoft.Extensions.Logging": "1.0.0",
