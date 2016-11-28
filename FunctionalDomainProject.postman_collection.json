@@ -22,7 +22,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/first",
+				"url": "http://localhost:5000/api/template",
 				"method": "PUT",
 				"header": [
 					{
@@ -33,7 +33,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"id\":\"{{id}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\":[],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+					"raw": "{\n\t\"id\":\"{{id}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\": [{\n\t\t\"id\": \"64994f25-9e8d-4967-a5e3-c875c71e092f\",\n\t\t\"name\": \"str\", \n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"date\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"2016-11-28T02:19:32.5267827Z\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"num\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [0] }\n\t}],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
 				},
 				"description": ""
 			},
@@ -42,7 +42,7 @@
 		{
 			"name": "Get template",
 			"request": {
-				"url": "http://localhost:5000/api/first?id={{id}}",
+				"url": "http://localhost:5000/api/template?id={{id}}",
 				"method": "GET",
 				"header": [
 					{

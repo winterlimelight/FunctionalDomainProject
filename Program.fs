@@ -6,30 +6,26 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc.Formatters.Json
 open Microsoft.AspNetCore.Diagnostics
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Logging
 open Newtonsoft.Json.Serialization
-
-let onJsonError (sender:obj) (args:ErrorEventArgs) =
-    Logger.error (args.ToString())
-    ()
-
 
 type Startup(env: IHostingEnvironment) =
 
     member this.ConfigureServices(services: IServiceCollection) =
         let mvc = services.AddMvcCore()
-        mvc.AddJsonFormatters(fun serializerSettings -> 
-            serializerSettings.Error <- System.EventHandler<ErrorEventArgs>(onJsonError)
-        ) |> ignore
+        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GlobalExceptionFilter()))
+        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GeneralActionFilter()))
+        mvc.AddJsonFormatters() |> ignore
 
-    member this.Configure (app: IApplicationBuilder) =
-        app.UseDeveloperExceptionPage() |> ignore
+    member this.Configure (app: IApplicationBuilder, loggerFactory: ILoggerFactory) =
+        loggerFactory.AddConsole().AddDebug() |> ignore
         app.UseMvc() |> ignore
 
 
 [<EntryPoint>]
 let main argv = 
-    printfn "Starting"
-    Logger.info "Startup"
-    let host = WebHostBuilder().UseKestrel().UseContentRoot(Directory.GetCurrentDirectory()).UseStartup<Startup>().Build()
+    let mvcRoot = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Api")
+    Logger.info ("Starting. mvcRoot = " + mvcRoot)
+    let host = WebHostBuilder().UseKestrel().UseContentRoot(mvcRoot).UseStartup<Startup>().Build()
     host.Run()
     0 //exit code

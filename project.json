@@ -5,12 +5,14 @@
         "compilerName": "fsc",
         "compile": {
             "includeFiles": [
+                "Util.fs",
                 "Logger.fs",
                 "DomainTypes.fs",
                 "DomainInterfaces.fs",
                 "DomainOperations/Template.fs",
                 "Persistence.fs",
-                "Controllers/TemplateController.fs",
+                "Api/Filters.fs",
+                "Api/Controllers/TemplateController.fs",
                 "Program.fs"
             ]
         },

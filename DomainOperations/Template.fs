@@ -6,7 +6,11 @@ open DomainInterfaces
 module Template =
 
     let IsValid (template: Template) =
-        true
+        match template with
+        | { Fields = f } when (Util.isNull f) -> Logger.warn "Template must include a list"; false;
+        | { Fields = [] } -> Logger.warn "Template may not have an empty list"; false
+        | _ -> true
+
 
     let GetTemplate (id: System.Guid) (templateRepository: ITemplateRepository) =
         templateRepository.FindById id
