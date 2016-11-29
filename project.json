@@ -10,6 +10,7 @@
                 "DomainTypes.fs",
                 "DomainInterfaces.fs",
                 "DomainOperations/Template.fs",
+                "Commands/Template.fs",
                 "Persistence.fs",
                 "Api/Filters.fs",
                 "Api/Controllers/TemplateController.fs",

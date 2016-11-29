@@ -6,14 +6,16 @@ open DomainTypes
 let mutable fakeStore = new System.Collections.Generic.Dictionary<System.Guid, Template>()
 
 type TemplateRepository() =
-    interface ITemplateRepository with
+    interface ITemplateReadRepository with
         member this.FindById id =
             if fakeStore.ContainsKey(id) then Some(fakeStore.[id]) else None
 
             
-//TODO actual command pattern... i.e. pass a command tuple (cmd-enum, data) not just the template
-type TemplateCommandHandler() =
-    interface ITemplateCommandHandler with
+type TemplateWriteRepository() =
+    interface ITemplateWriteRepository with
+        member this.FindById id =
+            if fakeStore.ContainsKey(id) then Some(fakeStore.[id]) else None
+
         member this.Save (template: Template) =
             if fakeStore.ContainsKey template.Id then 
                 fakeStore.Remove template.Id |> ignore // our lazy fakeStore 'Update'

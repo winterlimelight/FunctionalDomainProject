@@ -2,8 +2,9 @@
 
 open DomainTypes
 
-type ITemplateRepository =
+type ITemplateReadRepository =
     abstract member FindById: System.Guid -> Template option
 
-type ITemplateCommandHandler =
+type ITemplateWriteRepository =
+    abstract member FindById: System.Guid -> Template option
     abstract member Save: Template -> unit
