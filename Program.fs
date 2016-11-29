@@ -13,8 +13,8 @@ type Startup(env: IHostingEnvironment) =
 
     member this.ConfigureServices(services: IServiceCollection) =
         let mvc = services.AddMvcCore()
-        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GlobalExceptionFilter()))
-        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GeneralActionFilter()))
+        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GlobalExceptionFilter())) |> ignore
+        mvc.AddMvcOptions(fun mvcOptions -> mvcOptions.Filters.Add(new Api.Filters.GeneralActionFilter())) |> ignore
         mvc.AddJsonFormatters() |> ignore
 
     member this.Configure (app: IApplicationBuilder, loggerFactory: ILoggerFactory) =
