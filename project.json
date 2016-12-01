@@ -6,6 +6,7 @@
         "compile": {
             "includeFiles": [
                 "Util.fs",
+                "Railway.fs",
                 "Logger.fs",
                 "DomainTypes.fs",
                 "DomainInterfaces.fs",

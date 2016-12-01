@@ -1,23 +1,25 @@
 module Commands.Template
 
+open Railway
 open DomainInterfaces
 
 type TemplateCommand =
     | Create of DomainTypes.Template
     | Update of DomainTypes.Template
 
-exception InvalidTemplate of string
-exception DuplicateId
+type TemplateCommandError =
+    | InvalidTemplate of string
+    | DuplicateId
 
 type ITemplateCommandHandler =
-    abstract Execute: TemplateCommand -> ITemplateWriteRepository -> unit
+    abstract Execute: TemplateCommand -> ITemplateWriteRepository -> Result<unit,TemplateCommandError>
 
 let IsValid (template: DomainTypes.Template) =
     match template with
-    | { Fields = f } when (Util.isNull f) -> (false, "Template must include a list")
-    | { Fields = [] } -> (false, "Template may not have an empty list")
-    | { Id = id } when id = System.Guid.Empty -> (false, "Template must have an Id")
-    | _ -> (true, "")
+    | { Fields = f } when (Util.isNull f) -> Failure (InvalidTemplate "Template must include a list")
+    | { Fields = [] } -> Failure (InvalidTemplate "Template may not have an empty list")
+    | { Id = id } when id = System.Guid.Empty -> Failure (InvalidTemplate "Template must have an Id")
+    | _ -> Success ()
 
 let TemplateCommandHandler = {
     new ITemplateCommandHandler with
@@ -25,18 +27,18 @@ let TemplateCommandHandler = {
             match cmd with
 
             | Create(template) ->
+                railway {
+                    do! IsValid template
 
-                match IsValid template with
-                | (false, reason) -> 
-                    Logger.warn reason
-                    raise (InvalidTemplate reason)
-                | _ ->
-                    match repo.FindById template.Id with
-                    | Some _ -> 
-                        Logger.warn (sprintf "Attempt to create template with existing id %O" template.Id)
-                        raise (DuplicateId)
-                    | None ->
-                        repo.Save template
+                    let foundTemplate = repo.FindById template.Id
+                    let! isDuplicate =
+                        match foundTemplate with 
+                        | Some _ -> Failure DuplicateId
+                        | None -> Success ()
 
-            | Update(template) -> ()
+                    repo.Save template
+                    return! Success ()
+                }
+
+            | Update(template) -> Success ()
 }
