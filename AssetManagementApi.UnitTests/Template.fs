@@ -3,8 +3,12 @@
 open System
 open Xunit
 
-[<TestFixture>]
 type TemplateDomainOperationsTests() =
+
     [<Fact>]
-    let passingTest =
-        Assert.That(true, Is.True)
+    let passingTest() =
+        Assert.True(true)
+
+    [<Fact>]
+    let failingTest() =
+        Assert.True(false)
