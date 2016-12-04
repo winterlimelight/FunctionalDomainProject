@@ -21,23 +21,23 @@
         "define": []
     },
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "dependencies": {
                 "Microsoft.NETCore.App": {
                     "type": "platform",
-                    "version": "1.0.1"
+                    "version": "1.1.0"
                 },
-                "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-161102",
+                "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-161111",
                 "Microsoft.AspNetCore.Diagnostics": "1.1.0",
-                "Microsoft.AspNetCore.Mvc": "1.0.1",
-                "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.1",
-                "Microsoft.AspNetCore.Mvc.Abstractions": "1.0.1",
-                "Microsoft.AspNetCore.Routing": "1.0.1",
-                "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-                "Microsoft.Extensions.Logging": "1.0.0",
-                "Microsoft.Extensions.Logging.Console": "1.0.0",
-                "Microsoft.Extensions.Logging.Debug": "1.0.0",
-                "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0"
+                "Microsoft.AspNetCore.Mvc": "1.1.0",
+                "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.1.0",
+                "Microsoft.AspNetCore.Mvc.Abstractions": "1.1.0",
+                "Microsoft.AspNetCore.Routing": "1.1.0",
+                "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
+                "Microsoft.Extensions.Logging": "1.1.0",
+                "Microsoft.Extensions.Logging.Console": "1.1.0",
+                "Microsoft.Extensions.Logging.Debug": "1.1.0",
+                "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0"
             }
         }
     },
