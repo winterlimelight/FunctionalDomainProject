@@ -8,15 +8,14 @@
 	},
 	"item": [
 		{
-			"name": "Create template",
+			"name": "Create template - bad format",
 			"event": [
 				{
-					"listen": "prerequest",
+					"listen": "test",
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"postman.setGlobalVariable(\"id\", \"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\");",
-							"postman.setGlobalVariable(\"templateName\", \"test template\");"
+							"tests[\"Bad request\"] = responseCode.code === 400;"
 						]
 					}
 				}
@@ -33,7 +32,83 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"id\":\"{{id}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\": [{\n\t\t\"id\": \"64994f25-9e8d-4967-a5e3-c875c71e092f\",\n\t\t\"name\": \"str\", \n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"date\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"2016-11-28T02:19:32.5267827Z\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"num\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [0] }\n\t}],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+					"raw": "{\n\t\"id\":\"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\",\n\t\"name\":\"name\",\n\t\"fields\": [{\n\t\t\"id\": \"64994f25-9e8d-4967-a5e3-c875c71e092f\",\n\t\t\"name\": \"str\", \n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"\"] }\n\t},\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"date\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"2016-11-28T02:19:32.5267827Z\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"num\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [0] }\n\t}],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create template - empty fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Bad request\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/template",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\",\n\t\"name\":\"name\",\n\t\"fields\": [],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create template - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Created\"] = responseCode.code === 201;"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setGlobalVariable(\"templateid\", \"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\");",
+							"postman.setGlobalVariable(\"templateName\", \"test template\");",
+							"",
+							"postman.setGlobalVariable(\"strFieldId\", \"64994f25-9e8d-4967-a5e3-c875c71e092f\");",
+							"postman.setGlobalVariable(\"dateFieldId\", \"65643eeb-211b-441a-9820-7733b4b1a1d8\");",
+							"postman.setGlobalVariable(\"numFieldId\", \"65643eeb-211b-441a-9820-7733b4b1a1d8\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/template",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"{{templateid}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\": [{\n\t\t\"id\": \"{{strFieldId}}\",\n\t\t\"name\": \"str\", \n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"\"] }\n\t},{\n\t\t\"id\": \"{{dateFieldId}}\",\n\t\t\"name\": \"date\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"2016-11-28T02:19:32.5267827Z\"] }\n\t},{\n\t\t\"id\": \"{{numFieldId}}\",\n\t\t\"name\": \"num\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [0] }\n\t}],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
 				},
 				"description": ""
 			},
@@ -41,8 +116,25 @@
 		},
 		{
 			"name": "Get template",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"var templateId = postman.getGlobalVariable(\"templateid\");",
+							"tests[\"Expected Id\"] = jsonData.id == templateId;",
+							"",
+							"var templateName = postman.getGlobalVariable(\"templateName\");",
+							"tests[\"Expected Name\"] = jsonData.name == templateName;"
+						]
+					}
+				}
+			],
 			"request": {
-				"url": "http://localhost:5000/api/template?id={{id}}",
+				"url": "http://localhost:5000/api/template?id={{templateid}}",
 				"method": "GET",
 				"header": [
 					{
@@ -56,6 +148,118 @@
 					"raw": "{ \n\tId: \"{{id}}\",\n\tName: \"TestTemplate\"\n}"
 				},
 				"description": "Get template"
+			},
+			"response": []
+		},
+		{
+			"name": "Create template - Duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Created\"] = responseCode.code === 409;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/template",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"{{templateid}}\",\n\t\"name\":\"{{templateName}}\",\n\t\"fields\": [{\n\t\t\"id\": \"64994f25-9e8d-4967-a5e3-c875c71e092f\",\n\t\t\"name\": \"str\", \n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"date\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"2016-11-28T02:19:32.5267827Z\"] }\n\t},{\n\t\t\"id\": \"65643eeb-211b-441a-9820-7733b4b1a1d8\",\n\t\t\"name\": \"num\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [0] }\n\t}],\n\t\"maintenanceProgramId\":\"00000000-0000-0000-0000-000000000000\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create asset - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Created\"] = responseCode.code === 201;"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setGlobalVariable(\"asset1id\", \"bbcaaf53-a4c2-49b7-b00d-f071254e716e\");",
+							"postman.setGlobalVariable(\"asset1name\", \"test asset 1\");",
+							"postman.setGlobalVariable(\"strFieldValue\", \"test string @ßḉ\");",
+							"postman.setGlobalVariable(\"dateFieldValue\", \"2016-12-07T14:00:00Z\");",
+							"postman.setGlobalVariable(\"numFieldValue\", \"365\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/asset",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"{{asset1id}}\",\n\t\"name\":\"{{asset1name}}\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"id\": \"{{strFieldId}}\",\n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"id\": \"{{dateFieldId}}\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"id\": \"{{numFieldId}}\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get asset 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"var asset1id = postman.getGlobalVariable(\"asset1id\");",
+							"tests[\"Expected Id\"] = jsonData.id == asset1id;",
+							"",
+							"var asset1name = postman.getGlobalVariable(\"asset1name\");",
+							"tests[\"Expected Name\"] = jsonData.name == asset1name;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:5000/api/asset?id={{asset1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\tId: \"{{id}}\",\n\tName: \"TestTemplate\"\n}"
+				},
+				"description": ""
 			},
 			"response": []
 		}

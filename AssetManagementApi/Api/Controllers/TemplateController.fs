@@ -14,7 +14,7 @@ open AssetManagementApi.Persistence
 open AssetManagementApi.Railway
 
 [<Route("api/template")>]
-// TODO Unit tests
+
 type TemplateController() =
     inherit Controller()
 
@@ -31,8 +31,10 @@ type TemplateController() =
         let result = TemplateCommandHandler.Execute cmd (new TemplateWriteRepository()) //TODO inject TemplateCommandHandler, TemplateWriteRepository
         match result with
         | Failure (err: TemplateCommandError) ->
-            Logger.warn (sprintf "TemplateController.Create bad request: %O" err)
-            this.BadRequest(err) :> IActionResult 
+            Logger.warn (sprintf "TemplateController.Create error: %A" err)
+            match err with
+            | DuplicateId -> this.StatusCode(409) :> IActionResult
+            | _ -> this.BadRequest(err) :> IActionResult 
         | Success _ ->
             let url = new UrlActionContext (Controller = "Template", Action = "Get", Values = new RouteValueDictionary(dict [("id", box template.Id)]))
             this.Created((this.Url.Action url), "") :> IActionResult

@@ -21,6 +21,7 @@ let IsValid (template: DomainTypes.Template) =
     | { Fields = [] } -> Failure (InvalidTemplate "Template may not have an empty list")
     | { Id = id } when id = System.Guid.Empty -> Failure (InvalidTemplate "Template must have an Id")
     | _ -> Success ()
+    //TODO validate field ids (must be globally unique) - will require template read repo.
 
 let TemplateCommandHandler = {
     new ITemplateCommandHandler with

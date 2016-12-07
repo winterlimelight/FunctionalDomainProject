@@ -35,7 +35,7 @@ type FieldDefinition = {
 }
 
 type Field = {
-    Definition: FieldDefinition
+    FieldDefinitionId: System.Guid
     Value: FieldValue
 }
 

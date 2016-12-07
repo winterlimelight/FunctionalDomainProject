@@ -10,10 +10,13 @@
                 "Logger.fs",
                 "DomainTypes.fs",
                 "DomainInterfaces.fs",
+                "DomainOperations/Asset.fs",
                 "DomainOperations/Template.fs",
+                "Commands/Asset.fs",
                 "Commands/Template.fs",
                 "Persistence.fs",
                 "Api/Filters.fs",
+                "Api/Controllers/AssetController.fs",
                 "Api/Controllers/TemplateController.fs",
                 "Program.fs"
             ]

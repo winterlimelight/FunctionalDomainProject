@@ -4,6 +4,7 @@ open DomainInterfaces
 open DomainTypes
 
 let mutable fakeTemplateStore = new System.Collections.Generic.Dictionary<System.Guid, Template>()
+let mutable fakeAssetStore = new System.Collections.Generic.Dictionary<System.Guid, Asset>()
 
 type TemplateRepository() =
     interface ITemplateReadRepository with
@@ -22,3 +23,18 @@ type TemplateWriteRepository() =
             fakeTemplateStore.Add(template.Id, template)
 
 
+type AssetRepository() =
+    interface IAssetReadRepository with
+        member this.FindById id =
+            if fakeAssetStore.ContainsKey(id) then Some(fakeAssetStore.[id]) else None
+
+            
+type AssetWriteRepository() =
+    interface IAssetWriteRepository with
+        member this.FindById id =
+            if fakeAssetStore.ContainsKey(id) then Some(fakeAssetStore.[id]) else None
+
+        member this.Save (asset: Asset) =
+            if fakeAssetStore.ContainsKey asset.Id then 
+                fakeAssetStore.Remove asset.Id |> ignore // our lazy fakeStore 'Update'
+            fakeAssetStore.Add(asset.Id, asset)
