@@ -1,15 +1,17 @@
-﻿namespace aspnetcore3.Controllers
+﻿namespace AssetManagementApi.Api.Controllers
 
 open System
 open System.Collections.Generic
 open Microsoft.AspNetCore.Routing
 open Microsoft.AspNetCore.Mvc
 open Microsoft.AspNetCore.Mvc.Routing
-open DomainTypes
-open DomainOperations.Template
-open Commands.Template
-open Persistence
-open Railway
+
+open AssetManagementApi
+open AssetManagementApi.DomainTypes
+open AssetManagementApi.DomainOperations.Template
+open AssetManagementApi.Commands.Template
+open AssetManagementApi.Persistence
+open AssetManagementApi.Railway
 
 [<Route("api/template")>]
 // TODO Unit tests

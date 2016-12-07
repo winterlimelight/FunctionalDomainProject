@@ -1,7 +1,7 @@
-﻿namespace DomainOperations
+﻿namespace AssetManagementApi.DomainOperations
 
-open DomainTypes
-open DomainInterfaces
+open AssetManagementApi.DomainTypes
+open AssetManagementApi.DomainInterfaces
 
 module Template =
 

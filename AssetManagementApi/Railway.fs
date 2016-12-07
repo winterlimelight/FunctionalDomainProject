@@ -1,4 +1,4 @@
-module Railway
+module AssetManagementApi.Railway
 
 // Combination of http://fsharpforfunandprofit.com/posts/recipe-part2/ and http://blog.ploeh.dk/2016/03/21/composition-with-an-either-computation-expression/
 // An implementation may exist in Chessie, but I'm getting package manager errors for that, and at this stage I think there is benefits to understanding the 

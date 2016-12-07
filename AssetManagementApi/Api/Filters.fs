@@ -1,9 +1,10 @@
-module Api.Filters
+module AssetManagementApi.Api.Filters
 
 open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Mvc
 open Microsoft.AspNetCore.Mvc.Filters
 open Microsoft.AspNetCore.Mvc.ModelBinding
+open AssetManagementApi
 
 type GlobalExceptionFilter() =
     interface IExceptionFilter with

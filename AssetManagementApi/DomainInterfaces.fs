@@ -1,4 +1,4 @@
-﻿module DomainInterfaces
+﻿module AssetManagementApi.DomainInterfaces
 
 open DomainTypes
 

@@ -1,4 +1,4 @@
-﻿module DomainTypes
+﻿module AssetManagementApi.DomainTypes
 
 type MaintenanceSummary = MaintenanceSummary of string
 type MaintenanceDetails = MaintenanceDetails of string

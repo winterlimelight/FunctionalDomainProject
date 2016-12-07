@@ -1,4 +1,4 @@
-﻿module Logger 
+﻿module AssetManagementApi.Logger 
 
 open Microsoft.Extensions.Logging
 

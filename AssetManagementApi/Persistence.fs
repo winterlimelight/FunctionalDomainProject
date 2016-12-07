@@ -1,4 +1,4 @@
-﻿module Persistence
+﻿module AssetManagementApi.Persistence
 
 open DomainInterfaces
 open DomainTypes

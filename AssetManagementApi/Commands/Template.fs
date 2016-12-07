@@ -1,7 +1,8 @@
-module Commands.Template
+module AssetManagementApi.Commands.Template
 
-open Railway
-open DomainInterfaces
+open AssetManagementApi
+open AssetManagementApi.Railway
+open AssetManagementApi.DomainInterfaces
 
 type TemplateCommand =
     | Create of DomainTypes.Template
