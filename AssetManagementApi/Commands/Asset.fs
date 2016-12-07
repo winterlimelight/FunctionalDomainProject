@@ -13,15 +13,19 @@ type AssetCommandError =
     | DuplicateId
 
 type IAssetCommandHandler =
-    abstract Execute: AssetCommand -> IAssetWriteRepository -> Result<unit,AssetCommandError>
+    abstract Execute: AssetCommand -> IAssetWriteRepository -> ITemplateReadRepository -> Result<unit,AssetCommandError>
 
-(*let IsValid (template: DomainTypes.Template) =
-    match template with
-    | { Fields = f } when (Util.isNull f) -> Failure (InvalidTemplate "Template must include a list")
-    | { Fields = [] } -> Failure (InvalidTemplate "Template may not have an empty list")
-    | { Id = id } when id = System.Guid.Empty -> Failure (InvalidTemplate "Template must have an Id")
-    // TODO validate template id - means we'll need template read repo.
-    | _ -> Success () *)
+let IsValid (asset: DomainTypes.Asset) (templateRepo: ITemplateReadRepository) =
+    match asset with
+    | { Fields = f } when (Util.isNull f) -> Failure (InvalidAsset "Asset fields must be a list, but may be empty to use template defaults")
+    | { Subassets = f } when (Util.isNull f) -> Failure (InvalidAsset "Asset subassets must be a list, but may be empty if there are no sub-assets")
+    | { Id = id } when id = System.Guid.Empty -> Failure (InvalidAsset "Asset must have an id")
+    | { TemplateId = templateId } ->
+        match templateId with
+        | tid when tid = System.Guid.Empty -> Failure (InvalidAsset "Asset must have a template id")
+        | tid when (None = templateRepo.FindById tid) -> Failure (InvalidAsset "Asset's template id must exist")
+        | _ -> Success()
+    | _ -> Success () 
     
 // TODO - it is possible to create asset hierarchy in single hit... which leaves us with interesting challenges at a transactional level (e.g. parent creates ok, child is dupid)?...
 // but is that something the domain should worry about, or is that a persistence concern only? Or does it mean our design is poor, and we should be talking about
@@ -29,12 +33,12 @@ type IAssetCommandHandler =
 
 let AssetCommandHandler = {
     new IAssetCommandHandler with
-        member this.Execute (cmd: AssetCommand) (repo: IAssetWriteRepository) =
+        member this.Execute (cmd: AssetCommand) (repo: IAssetWriteRepository) (templateRepo: ITemplateReadRepository) =
             match cmd with
 
             | Create(asset) ->
                 railway {
-                    //do! IsValidStructure asset
+                    do! IsValid asset templateRepo
 
                     let foundAsset = repo.FindById asset.Id
                     let! isDuplicate =

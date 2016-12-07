@@ -20,7 +20,7 @@ type AssetController() =
 
     [<HttpGet>]
     member this.Get(id: System.Guid) : IActionResult =
-        match GetAsset id (new AssetRepository()) with //TODO inject AssetRepository
+        match GetAsset id (new AssetReadRepository()) with //TODO inject AssetReadRepository
         | Some asset -> this.Json(asset) :> IActionResult
         | None -> this.NotFound() :> IActionResult
 
@@ -28,7 +28,7 @@ type AssetController() =
     member this.Create([<FromBody>]asset: Asset) : IActionResult =       
         let cmd = AssetCommand.Create(asset)
 
-        let result = AssetCommandHandler.Execute cmd (new AssetWriteRepository()) //TODO inject AssetCommandHandler, AssetWriteRepository
+        let result = AssetCommandHandler.Execute cmd (new AssetWriteRepository()) (new TemplateReadRepository()) //TODO inject AssetCommandHandler, AssetWriteRepository, TemplateReadRepository
         match result with
         | Failure (err: AssetCommandError) ->
             Logger.warn (sprintf "AssetController.Create error: %A" err)

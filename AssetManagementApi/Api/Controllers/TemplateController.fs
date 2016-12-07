@@ -20,7 +20,7 @@ type TemplateController() =
 
     [<HttpGet>]
     member this.Get(id: System.Guid) : IActionResult =
-        match GetTemplate id (new TemplateRepository()) with //TODO inject TemplateRepository
+        match GetTemplate id (new TemplateReadRepository()) with //TODO inject TemplateReadRepository
         | Some template -> this.Json(template) :> IActionResult
         | None -> this.NotFound() :> IActionResult
 
