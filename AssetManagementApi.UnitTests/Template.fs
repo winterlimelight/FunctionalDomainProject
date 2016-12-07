@@ -24,6 +24,9 @@ type TemplateValidationTestData() =
                 [|
                     { basicTemplate() with Fields = [] } :> obj
                     Railway.Failure (InvalidTemplate "Template may not have an empty list") :> Railway.Result<unit,TemplateCommandError> :> obj
+                |]; [|
+                    { basicTemplate() with Id = System.Guid.Empty } :> obj
+                    Railway.Failure (InvalidTemplate "Template must have an Id") :> Railway.Result<unit,TemplateCommandError> :> obj
                 |]
             ]
 
