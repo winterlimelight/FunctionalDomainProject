@@ -1,0 +1,5 @@
+﻿source https://nuget.org/api/v2
+nuget Suave
+nuget Suave.Experimental
+nuget SQLProvider
+nuget Newtonsoft.Json

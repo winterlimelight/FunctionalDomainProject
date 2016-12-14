@@ -1,2 +1,6 @@
 AssetManagementApi.UnitTests/bin/
 AssetManagementApi.UnitTests/obj/
+packages/
+AmApi/bin/
+AmApi/obj/
+paket-files/

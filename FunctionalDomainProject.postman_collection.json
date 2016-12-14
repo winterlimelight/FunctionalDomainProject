@@ -24,6 +24,8 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
+							"postman.setGlobalVariable(\"baseurl\", \"http://localhost:5000\");",
+							"",
 							"postman.setGlobalVariable(\"templateid\", \"11c43ee8-b9d3-4e51-b73f-bd9dda66e29c\");",
 							"postman.setGlobalVariable(\"templateName\", \"test template\");",
 							"",
@@ -35,7 +37,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/template",
+				"url": "{{baseurl}}/template",
 				"method": "PUT",
 				"header": [
 					{
@@ -66,7 +68,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/template",
+				"url": "{{baseurl}}/template",
 				"method": "PUT",
 				"header": [
 					{
@@ -97,7 +99,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/template",
+				"url": "{{baseurl}}/template",
 				"method": "PUT",
 				"header": [
 					{
@@ -125,16 +127,16 @@
 							"var jsonData = JSON.parse(responseBody);",
 							"",
 							"var templateId = postman.getGlobalVariable(\"templateid\");",
-							"tests[\"Expected Id\"] = jsonData.id == templateId;",
+							"tests[\"Expected Id\"] = jsonData.Id == templateId;",
 							"",
 							"var templateName = postman.getGlobalVariable(\"templateName\");",
-							"tests[\"Expected Name\"] = jsonData.name == templateName;"
+							"tests[\"Expected Name\"] = jsonData.Name == templateName;"
 						]
 					}
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/template?id={{templateid}}",
+				"url": "{{baseurl}}/template/{{templateid}}",
 				"method": "GET",
 				"header": [
 					{
@@ -165,7 +167,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/template",
+				"url": "{{baseurl}}/template",
 				"method": "PUT",
 				"header": [
 					{
@@ -209,7 +211,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -253,7 +255,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -297,7 +299,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -341,7 +343,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -385,7 +387,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -429,7 +431,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -473,7 +475,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset",
+				"url": "{{baseurl}}/asset",
 				"method": "PUT",
 				"header": [
 					{
@@ -510,7 +512,7 @@
 				}
 			],
 			"request": {
-				"url": "http://localhost:5000/api/asset?id={{asset1id}}",
+				"url": "{{baseurl}}/asset/{{asset1id}}",
 				"method": "GET",
 				"header": [
 					{
