@@ -17,8 +17,8 @@ type IAssetCommandHandler =
 
 let IsValid (asset: DomainTypes.Asset) (templateRepo: ITemplateReadRepository) =
     match asset with
-    // TODO | { Fields = f } when (isNull f) -> Failure (InvalidAsset "Asset fields must be a list, but may be empty to use template defaults")
-    // TODO | { Subassets = f } when (isNull f) -> Failure (InvalidAsset "Asset subassets must be a list, but may be empty if there are no sub-assets")
+    | { Fields = f } when isNull (box f) -> Failure (InvalidAsset "Asset fields must be a list, but may be empty to use template defaults")
+    | { Subassets = f } when isNull (box f) -> Failure (InvalidAsset "Asset subassets must be a list, but may be empty if there are no sub-assets")
     | { Id = id } when id = System.Guid.Empty -> Failure (InvalidAsset "Asset must have an id")
     | { TemplateId = templateId } ->
         match templateId with

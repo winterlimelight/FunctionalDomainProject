@@ -503,10 +503,10 @@
 							"var jsonData = JSON.parse(responseBody);",
 							"",
 							"var asset1id = postman.getGlobalVariable(\"asset1id\");",
-							"tests[\"Expected Id\"] = jsonData.id == asset1id;",
+							"tests[\"Expected Id\"] = jsonData.Id == asset1id;",
 							"",
 							"var asset1name = postman.getGlobalVariable(\"asset1name\");",
-							"tests[\"Expected Name\"] = jsonData.name == asset1name;"
+							"tests[\"Expected Name\"] = jsonData.Name == asset1name;"
 						]
 					}
 				}

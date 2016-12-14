@@ -17,7 +17,7 @@ type ITemplateCommandHandler =
 
 let IsValid (template: DomainTypes.Template) =
     match template with
-    // TODO | { Fields = f } when (isNull f) -> Failure (InvalidTemplate "Template must include a list")
+    | { Fields = f } when isNull (box f) -> Failure (InvalidTemplate "Template must include a list")
     | { Fields = [] } -> Failure (InvalidTemplate "Template may not have an empty list")
     | { Id = id } when id = System.Guid.Empty -> Failure (InvalidTemplate "Template must have an Id")
     | _ -> Success ()

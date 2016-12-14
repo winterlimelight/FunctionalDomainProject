@@ -1,43 +1,30 @@
-﻿namespace AmApi.Api.Controllers
+﻿module AmApi.Api.Asset
 
 open System
+open Suave
+open Suave.Successful
+open Suave.RequestErrors
 
-(*open System.Collections.Generic
-open Microsoft.AspNetCore.Routing
-open Microsoft.AspNetCore.Mvc
-open Microsoft.AspNetCore.Mvc.Routing
-
-open AmApi
-open AmApi.DomainTypes
-open AmApi.DomainOperations.Asset
-open AmApi.Commands.Asset
-open AmApi.Persistence
+open AmApi.Util
 open AmApi.Railway
+open AmApi.Commands.Asset
+open AmApi.Operations.Asset
+open AmApi.Persistence
 
-[<Route("api/asset")>]
+let createAsset asset =
+    let cmd = AssetCommand.Create(asset)
+    let result = AssetCommandHandler.Execute cmd (new AssetWriteRepository()) (new TemplateReadRepository())//TODO inject AssetCommandHandler, TemplateReadRepository - args? or should controllers have access to a resolution context (global)?
 
-type AssetController() =
-    inherit Controller()
+    match result with
+    | Failure (err: AssetCommandError) ->
+        Logger.Warn (sprintf "AssetController.Create error: %A" err)
+        match err with
+        | DuplicateId -> CONFLICT (sprintf "%A" err)
+        | _ -> BAD_REQUEST (sprintf "%A" err)
+    | Success _ ->
+        CREATED (sprintf Path.Assets.assetById (string asset.Id))
 
-    [<HttpGet>]
-    member this.Get(id: System.Guid) : IActionResult =
-        match GetAsset id (new AssetReadRepository()) with //TODO inject AssetReadRepository
-        | Some asset -> this.Json(asset) :> IActionResult
-        | None -> this.NotFound() :> IActionResult
-
-    [<HttpPut>]
-    member this.Create([<FromBody>]asset: Asset) : IActionResult =       
-        let cmd = AssetCommand.Create(asset)
-
-        let result = AssetCommandHandler.Execute cmd (new AssetWriteRepository()) (new TemplateReadRepository()) //TODO inject AssetCommandHandler, AssetWriteRepository, TemplateReadRepository
-        match result with
-        | Failure (err: AssetCommandError) ->
-            Logger.warn (sprintf "AssetController.Create error: %A" err)
-            match err with
-            | DuplicateId -> this.StatusCode(409) :> IActionResult
-            | _ -> this.BadRequest(err) :> IActionResult 
-        | Success _ ->
-            let url = new UrlActionContext (Controller = "Asset", Action = "Get", Values = new RouteValueDictionary(dict [("id", box asset.Id)]))
-            this.Created((this.Url.Action url), "") :> IActionResult
-
-*)
+let getAsset (id:Guid) =
+    match GetAsset id (new AssetReadRepository()) with //TODO inject AssetReadRepository
+    | Some asset -> Common.jsonResponse asset
+    | None -> NOT_FOUND ""

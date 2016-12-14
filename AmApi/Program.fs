@@ -40,14 +40,13 @@ let readGuid fSuccess id =
 let route =
     choose [
         path Path.Assets.template >=> choose [
-                PUT >=> readJson Template.createTemplate
-            ]
+            PUT >=> readJson Template.createTemplate
+        ]
+        path Path.Assets.asset >=> choose [
+            PUT >=> readJson Asset.createAsset
+        ]
         pathScan Path.Assets.templateById (readGuid Template.getTemplate)
-
-        path Path.Assets.template >=> choose [
-                PUT >=> OK "Asset PUT"
-            ]
-        pathScan Path.Assets.assetById (fun guid -> OK (sprintf "Get Asset by Id: %s" guid))
+        pathScan Path.Assets.assetById (readGuid Asset.getAsset)
         NOT_FOUND "No handler found"
     ]
 
@@ -62,9 +61,14 @@ let handleRequest:WebPart<HttpContext> =
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" argv
+   
+    let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info
+    let logger = Suave.Logging.CombiningTarget([ defaultLog; Util.SuaveLoggerAdapter() ])
 
-    let config = { defaultConfig with bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" 5000 ]}
+    let config = { defaultConfig with 
+                    bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" 5000 ]
+                    logger = logger
+    }
 
     startWebServer config handleRequest
-    0 // return an integer exit code
+    0 // exit code
