@@ -11,6 +11,7 @@ type AssetCommand =
 type AssetCommandError =
     | InvalidAsset of string
     | DuplicateId
+    | NotFound
 
 type IAssetCommandHandler =
     abstract Execute: AssetCommand -> IAssetWriteRepository -> ITemplateReadRepository -> Result<unit,AssetCommandError>
@@ -30,6 +31,7 @@ let IsValid (asset: DomainTypes.Asset) (templateRepo: ITemplateReadRepository) =
 // TODO - it is possible to create asset hierarchy in single hit... which leaves us with interesting challenges at a transactional level (e.g. parent creates ok, child is dupid)?...
 // but is that something the domain should worry about, or is that a persistence concern only? Or does it mean our design is poor, and we should be talking about
 // asset references and making the controller manage the saga? is entity vs aggregate question really. asset is an entity and an aggregate, sub-asset is a type of asset.
+// I think the persistence can handle that. If SQL it uses a transaction; if Doc store it calls it a document/versions one.
 
 let AssetCommandHandler = {
     new IAssetCommandHandler with
@@ -50,5 +52,17 @@ let AssetCommandHandler = {
                     return! Success ()
                 }
 
-            | Update(asset) -> Success ()
+            | Update(asset) -> 
+                railway {
+                    do! IsValid asset templateRepo
+
+                    let foundAsset = repo.FindById asset.Id
+                    let! exists = 
+                        match foundAsset with
+                        | None -> Failure NotFound
+                        | Some _ -> Success()
+
+                    repo.Save asset
+                    return! Success ()
+                }
 }

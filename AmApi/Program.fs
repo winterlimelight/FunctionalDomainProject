@@ -35,7 +35,6 @@ let readGuid fSuccess id =
     match result with
     | true -> fSuccess guid
     | false -> BAD_REQUEST (sprintf "%s is not a guid" id)
-    
 
 let route =
     choose [
@@ -46,7 +45,13 @@ let route =
             PUT >=> readJson Asset.createAsset
         ]
         pathScan Path.Assets.templateById (readGuid Template.getTemplate)
-        pathScan Path.Assets.assetById (readGuid Asset.getAsset)
+        pathScan Path.Assets.assetById (fun guid -> 
+            choose [
+                GET >=> readGuid Asset.getAsset guid
+                PUT >=> readJson (fun json -> readGuid (Asset.updateAsset json) guid)
+        ])
+        
+
         NOT_FOUND "No handler found"
     ]
 

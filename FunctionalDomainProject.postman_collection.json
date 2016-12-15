@@ -528,6 +528,145 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Update asset - id not found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Created\"] = responseCode.code === 404;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{baseurl}}/asset/4C165A3D-2817-406A-9645-5E7E9FBBB4EE",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"4C165A3D-2817-406A-9645-5E7E9FBBB4EE\",\n\t\"name\":\"{{assetName}}Ignore\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"fielddefinitionid\": \"{{strFieldId}}\",\n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{dateFieldId}}\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{numFieldId}}\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update asset - id mismatch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Created\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{baseurl}}/asset/{{asset1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"4C165A3D-2817-406A-9645-5E7E9FBBB4EE\",\n\t\"name\":\"{{assetName}}\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"fielddefinitionid\": \"{{strFieldId}}\",\n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{dateFieldId}}\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{numFieldId}}\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update asset - Success *",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"OK\"] = responseCode.code === 200;"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"postman.setGlobalVariable(\"asset1name\", \"test asset 1 changed\");",
+							"postman.setGlobalVariable(\"strFieldValue\", \"another random string\");",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{baseurl}}/asset/{{asset1id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"{{asset1id}}\",\n\t\"name\":\"{{asset1name}}\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"fielddefinitionid\": \"{{strFieldId}}\",\n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{dateFieldId}}\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{numFieldId}}\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get asset 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Expected Id\"] = jsonData.Id == postman.getGlobalVariable(\"asset1id\");",
+							"tests[\"Expected Name\"] = jsonData.Name == postman.getGlobalVariable(\"asset1name\");",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{baseurl}}/asset/{{asset1id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\tId: \"{{id}}\",\n\tName: \"TestTemplate\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
