@@ -4,3 +4,6 @@ packages/
 AmApi/bin/
 AmApi/obj/
 paket-files/
+AmApi.UnitTests/bin/
+AmApi.UnitTests/obj/
+AmApi.UnitTests/TestResult.xml

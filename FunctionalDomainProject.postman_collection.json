@@ -627,7 +627,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"id\":\"{{asset1id}}\",\n\t\"name\":\"{{asset1name}}\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"fielddefinitionid\": \"{{strFieldId}}\",\n\t\t\"field\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{dateFieldId}}\",\n\t\t\"field\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{numFieldId}}\",\n\t\t\"field\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
+					"raw": "{\n\t\"id\":\"{{asset1id}}\",\n\t\"name\":\"{{asset1name}}\",\n\t\"commissioned\":\"2016-12-08\",\n\t\"cost\":\"250,000\",\n\t\"fields\": [{\n\t\t\"fielddefinitionid\": \"{{strFieldId}}\",\n\t\t\"value\": { \"case\": \"StringField\", \"fields\": [\"{{strFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{dateFieldId}}\",\n\t\t\"value\": { \"case\": \"DateField\", \"fields\": [\"{{dateFieldValue}}\"] }\n\t},{\n\t\t\"fielddefinitionid\": \"{{numFieldId}}\",\n\t\t\"value\": { \"case\": \"NumericField\", \"fields\": [\"{{numFieldValue}}\"] }\n\t}],\n\t\"templateid\":\"{{templateid}}\",\n\t\"subassets\":[]\n}"
 				},
 				"description": ""
 			},
@@ -645,6 +645,12 @@
 							"",
 							"tests[\"Expected Id\"] = jsonData.Id == postman.getGlobalVariable(\"asset1id\");",
 							"tests[\"Expected Name\"] = jsonData.Name == postman.getGlobalVariable(\"asset1name\");",
+							"",
+							"let strField = jsonData.Fields.find(function(field) {",
+							"    return field.FieldDefinitionId == postman.getGlobalVariable(\"strFieldId\");",
+							"})",
+							"tests[\"Expected String Field Type\"] = strField.Value.Case == \"StringField\";",
+							"tests[\"Expected String Field Value\"] = strField.Value.Fields[0] == postman.getGlobalVariable(\"strFieldValue\");",
 							""
 						]
 					}

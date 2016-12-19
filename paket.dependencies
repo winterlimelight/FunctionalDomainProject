@@ -3,3 +3,4 @@ nuget Suave
 nuget Suave.Experimental
 nuget SQLProvider
 nuget Newtonsoft.Json
+nuget FsUnit
