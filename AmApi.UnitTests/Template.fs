@@ -10,7 +10,7 @@ let basicTemplate() : DomainTypes.Template = {
     Id = System.Guid.NewGuid()
     Name = "templateName"
     Fields = [{ Id =  System.Guid.NewGuid(); Name = "strFieldName"; Field = DomainTypes.StringField("strFieldValue") }] 
-    MaintenanceProgramId = System.Guid.Empty 
+    MaintenanceProgramId = None
 }
 
 let emptyRepo = { new ITemplateWriteRepository with
@@ -24,16 +24,17 @@ let templateExistsRepo = { new ITemplateWriteRepository with
 }
 
 type CreateTemplateValidationData = { Tpl: DomainTypes.Template; Expected: Railway.Result<unit,TemplateCommandError> }
-let CreateTemplateValidationData1 = [|  {
-                                            Tpl = basicTemplate()
-                                            Expected = Railway.Success()
-                                    };  {
-                                            Tpl = { basicTemplate() with Fields = [] }
-                                            Expected = Railway.Failure (InvalidTemplate "Template may not have an empty list")
-                                    };  {
-                                            Tpl = { basicTemplate() with Id = System.Guid.Empty }
-                                            Expected = Railway.Failure (InvalidTemplate "Template must have an Id")
-                                    }|]
+let CreateTemplateValidationData1 = 
+    [|  {
+            Tpl = basicTemplate()
+            Expected = Railway.Success()
+    };  {
+            Tpl = { basicTemplate() with Fields = [] }
+            Expected = Railway.Failure (InvalidTemplate "Template may not have an empty list")
+    };  {
+            Tpl = { basicTemplate() with Id = System.Guid.Empty }
+            Expected = Railway.Failure (InvalidTemplate "Template must have an Id")
+    }|]
 
 [<TestCaseSource("CreateTemplateValidationData1")>]
 let ``Create template validation`` (data: CreateTemplateValidationData) =

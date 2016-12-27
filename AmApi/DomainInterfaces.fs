@@ -1,6 +1,14 @@
 ﻿module AmApi.DomainInterfaces
 
-open DomainTypes
+open AmApi.Util
+open AmApi.DomainTypes
+open FSharp.Data.Sql
+
+type Sql = SqlDataProvider<
+            ConnectionString="Server=.;Database=AssetManager;Trusted_Connection=True;MultipleActiveResultSets=true", 
+            DatabaseVendor=Common.DatabaseProviderTypes.MSSQLSERVER,
+            UseOptionTypes=true>
+type DbContext = Sql.dataContext
 
 type ITemplateReadRepository =
     abstract member FindById: System.Guid -> Template option

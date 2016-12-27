@@ -13,6 +13,7 @@ type _Logger() =
         log.Flush()
         log.Close()
 
+    member this.Debug msg = _log Diagnostics.TraceEventType.Verbose msg
     member this.Info msg = _log Diagnostics.TraceEventType.Information msg
     member this.Warn msg = _log Diagnostics.TraceEventType.Warning msg
     member this.Error msg = _log Diagnostics.TraceEventType.Error msg

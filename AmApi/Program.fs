@@ -66,6 +66,8 @@ let handleRequest:WebPart<HttpContext> =
 
 [<EntryPoint>]
 let main argv = 
+
+    FSharp.Data.Sql.Common.QueryEvents.SqlQueryEvent.Add (fun msg -> Logger.Debug (sprintf "Executing SQL: %s" msg)) // log SqlProvider queries
    
     let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info
     let logger = Suave.Logging.CombiningTarget([ defaultLog; Util.SuaveLoggerAdapter() ])

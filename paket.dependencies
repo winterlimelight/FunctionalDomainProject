@@ -4,3 +4,6 @@ nuget Suave.Experimental
 nuget SQLProvider
 nuget Newtonsoft.Json
 nuget FsUnit
+nuget FSharpx.Async
+nuget FSharpx.Collections
+nuget FSharpx.Extras

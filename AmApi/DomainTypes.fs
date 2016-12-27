@@ -46,7 +46,7 @@ type Template = {
     Fields: FieldDefinition list
     // I considered making MaintenanceProgram compositional, but that might be limiting for organizations that want a simple set
     // of scheduled maintenance periods (and no details specific to the type of maintenance)
-    MaintenanceProgramId: System.Guid
+    MaintenanceProgramId: System.Guid option
 }
 
 [<CLIMutable>]
