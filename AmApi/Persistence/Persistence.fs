@@ -7,7 +7,6 @@ open FSharpx.Option
 open DomainInterfaces
 open DomainTypes
 
-//let mutable fakeTemplateStore = new System.Collections.Generic.Dictionary<System.Guid, Template>()
 let mutable fakeAssetStore = new System.Collections.Generic.Dictionary<System.Guid, Asset>()
 
 type private TemplateQueryResultSet = DbContext.``dbo.TemplateEntity`` * DbContext.``dbo.FieldDefinitionEntity`` * DbContext.``dbo.FieldValueEntity``
@@ -45,8 +44,7 @@ let private templateByIdQuery (dc:DbContext) id : System.Linq.IQueryable<Templat
 
 let private templateById id : Template option =
     let dc:DbContext = Sql.GetDataContext()  //TODO pass-in
-    let query = templateByIdQuery dc id
-    let rows = Seq.toList query
+    let rows = templateByIdQuery dc id |> Seq.toList
     if [] = rows then None else Some (mapSingleTemplate rows)
 
 type TemplateReadRepository() =
@@ -58,22 +56,44 @@ type TemplateWriteRepository() =
         member this.FindById id = templateById id
         member this.Save (template: Template) =
             let dc:DbContext = Sql.GetDataContext()  //TODO pass-in
-            ()
-            // UP TO HERE - we tested get-template works ok with existing data - now we want to create first, then test on that.
-            (*use scope = new TransactionScope()
+            
+            // This is not great as we could make a lot of db calls within this transaction which would limit sql concurrency.
+            // This might be better dealt with by a sproc.
+            use scope = new TransactionScope()
 
             // delete using the find query (this would be problem if our FKs had delete integrity)
+            let rows = templateByIdQuery dc template.Id |> Seq.toList
+            if not rows.IsEmpty then
+                rows |> Seq.iter (fun (_, defn, value) -> defn.Delete(); value.Delete())
+                let (template, _, _) = rows.Head
+                template.Delete()
+                dc.SubmitUpdates()
 
-            // then add
-            
-            let newInvoice = ctx.Dbo.xxx.Create(customerId, invoiceDate)    
-            ctx.SubmitUpdates()
+            // add new template
+            let mutable newTemplate = dc.Dbo.Template.Create(template.Name)
+            newTemplate.TemplateId <- template.Id
+            newTemplate.MaintenanceProgramId <- template.MaintenanceProgramId
+            dc.SubmitUpdates()
 
-            ctx.Dbo.xxx.Create(amount, description, newInvoice.InvoiceId)
-            ctx.SubmitUpdates()
+            // add field definitions
+            template.Fields 
+            |> List.iter (fun field -> 
+                let mutable newDefn = dc.Dbo.FieldDefinition.Create(field.Name, template.Id) 
+                newDefn.FieldDefinitionId <- field.Id
+                dc.SubmitUpdates()
 
-            scope.Complete()  //Everything is OK
-            *)
+                let mutable newValue = dc.Dbo.FieldValue.Create(field.Id, 0uy)
+                newValue.FieldValueId <- System.Guid.NewGuid()
+                newValue.FieldDefinitionId <- field.Id
+                newValue.ValueType <- match field.Field with
+                                      | StringField s -> newValue.StringValue <- Some s; 1uy
+                                      | DateField d -> newValue.DateValue <- Some d; 2uy
+                                      | NumericField n -> newValue.NumericValue <- Some (float32 n); 3uy
+            )
+
+            dc.SubmitUpdates()
+            scope.Complete()
+            ()
 
 
 type AssetReadRepository() =

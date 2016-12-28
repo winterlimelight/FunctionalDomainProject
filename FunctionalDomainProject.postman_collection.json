@@ -31,7 +31,7 @@
 							"",
 							"postman.setGlobalVariable(\"strFieldId\", \"64994f25-9e8d-4967-a5e3-c875c71e092f\");",
 							"postman.setGlobalVariable(\"dateFieldId\", \"65643eeb-211b-441a-9820-7733b4b1a1d8\");",
-							"postman.setGlobalVariable(\"numFieldId\", \"65643eeb-211b-441a-9820-7733b4b1a1d8\");"
+							"postman.setGlobalVariable(\"numFieldId\", \"0dc9a542-04bb-4bd8-a612-46a8853597ae\");"
 						]
 					}
 				}
