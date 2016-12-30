@@ -5,6 +5,7 @@ open Suave
 open Suave.Successful
 open Suave.RequestErrors
 
+open AmApi
 open AmApi.Util
 open AmApi.Railway
 open AmApi.Commands.Template
@@ -24,7 +25,8 @@ let createTemplate template =
     | Success _ ->
         CREATED (sprintf Path.Assets.templateById (string template.Id))
 
-let getTemplate (id:Guid) =
-    match GetTemplate id (new TemplateReadRepository()) with //TODO inject TemplateReadRepository
+
+let getTemplate (getTemplateById:DomainInterfaces.GetTemplate) (id:Guid) : WebPart =
+    match (getTemplateById id) with
     | Some template -> Common.jsonResponse template
     | None -> NOT_FOUND ""

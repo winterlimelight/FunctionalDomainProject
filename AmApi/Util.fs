@@ -28,7 +28,7 @@ type _Logger() =
                                 | Suave.Logging.LogLevel.Fatal   -> Diagnostics.TraceEventType.Critical
         _log traceEventType msg
 
-let Logger = _Logger()
+let Logger = _Logger() //TODO remove and use the one in the context object.
 
 
 type SuaveLoggerAdapter() =

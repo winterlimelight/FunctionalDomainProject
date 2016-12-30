@@ -76,6 +76,7 @@
     <Compile Include="Api\Common.fs" />
     <Compile Include="Api\AssetController.fs" />
     <Compile Include="Api\TemplateController.fs" />
+    <Compile Include="CompositionRoot.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="paket.references" />

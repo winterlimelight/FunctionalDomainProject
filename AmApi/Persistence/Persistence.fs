@@ -42,18 +42,28 @@ let private templateByIdQuery (dc:DbContext) id : System.Linq.IQueryable<Templat
         select (template, fieldDef, fieldVal)
     }
 
-let private templateById id : Template option =
-    let dc:DbContext = Sql.GetDataContext()  //TODO pass-in
+let private templateById dc id : Template option =
     let rows = templateByIdQuery dc id |> Seq.toList
     if [] = rows then None else Some (mapSingleTemplate rows)
 
+
+module TemplateReadRepo =
+    let findById dc id = 
+        templateById dc id
+
+// Replaced by the above, but still in use in Asset create
 type TemplateReadRepository() =
     interface ITemplateReadRepository with
-        member this.FindById id = templateById id
+        member this.FindById id = 
+            let dc = Sql.GetDataContext()  //TODO pass-in
+            templateById dc id
             
 type TemplateWriteRepository() =
     interface ITemplateWriteRepository with
-        member this.FindById id = templateById id
+        member this.FindById id = 
+            let dc = Sql.GetDataContext()  //TODO pass-in
+            templateById dc id
+
         member this.Save (template: Template) =
             let dc:DbContext = Sql.GetDataContext()  //TODO pass-in
             
