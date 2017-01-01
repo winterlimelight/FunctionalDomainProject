@@ -31,8 +31,8 @@ let getContext f : WebPart =
 type ITemplateReadRepository =
     abstract member FindById: System.Guid -> Template option
 // In the OO world DbContext (or factory) would have come in with the repo class. In the FN world, it therefore becomes an arg.
-type FindTemplateById = DbContext -> System.Guid -> Template option // persistence level.
-type GetTemplate = System.Guid -> Template option //domain level
+type FindTemplateById = System.Guid -> Template option // domain/persistence 
+type GetTemplate = System.Guid -> Template option // api/domain
 // I'm thinking when all this is done we'll just be deleting the above types...
 
 
