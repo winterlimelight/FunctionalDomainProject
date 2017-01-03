@@ -10,10 +10,9 @@ open Suave.RequestErrors
 open Newtonsoft.Json
 
 open AmApi
-open AmApi.DomainInterfaces
-open AmApi.Util //TODO remove?
+open AmApi.Util
 open AmApi.CompositionRoot
-open AmApi.Api //TODO remove.
+open AmApi.Api.Path
 
 let readJson<'TRequestDto> fSuccess =
     request (fun req ->
@@ -40,33 +39,30 @@ let readGuid fSuccess id =
 
 let route dc =
     choose [
-        path Path.Assets.template >=> choose [
-            PUT >=> readJson Template.createTemplate
+        path Assets.template >=> choose [
+            PUT >=> readJson (ApiMethods.createTemplate dc)
         ]
-        path Path.Assets.asset >=> choose [
-            PUT >=> readJson Asset.createAsset
+        path Assets.asset >=> choose [
+            PUT >=> readJson (ApiMethods.createAsset dc)
         ]
 
-        pathScan Path.Assets.templateById (readGuid (ApiMethods.getTemplate dc))
+        pathScan Assets.templateById (readGuid (ApiMethods.getTemplate dc))
 
-        pathScan Path.Assets.assetById (fun guid -> 
+        pathScan Assets.assetById (fun guid -> 
             choose [
-                GET >=> readGuid Asset.getAsset guid
-                PUT >=> readJson (fun json -> readGuid (Asset.updateAsset json) guid)
+                GET >=> readGuid (ApiMethods.getAsset dc) guid
+                PUT >=> readJson (fun json -> readGuid ((ApiMethods.updateAsset dc) json) guid) //TODO write this nicely? |> ?
         ])
         
         NOT_FOUND "No handler found"
     ]
 
-let handleRequest (createRequestContext:unit -> RequestContext.T) : WebPart<HttpContext> = 
-    fun httpContext -> async {
-        let amCtx = createRequestContext()
-        amCtx.logger.Info (sprintf "Request: %O\r\n rawForm: %s" httpContext.request.url (System.Text.Encoding.UTF8.GetString httpContext.request.rawForm))
-        let setAmContext = fun _ -> RequestContext.set amCtx httpContext
-
+let handleRequest (globalLog:_Logger) : WebPart<HttpContext> = 
+    fun httpContext -> async {       
+        globalLog.Info (sprintf "Request: %O\r\n rawForm: %s" httpContext.request.url (System.Text.Encoding.UTF8.GetString httpContext.request.rawForm))
+        let dc = Store.Sql.GetDataContext()
         return! httpContext |> (
-            setAmContext 
-            >=> route amCtx.dc
+            route dc
         )
     }    
 
@@ -74,8 +70,6 @@ let handleRequest (createRequestContext:unit -> RequestContext.T) : WebPart<Http
 let main argv = 
 
     let globalLog = _Logger()
-    let createRequestContext = fun () -> RequestContext.create globalLog
-
     FSharp.Data.Sql.Common.QueryEvents.SqlQueryEvent.Add (fun msg -> globalLog.Debug (sprintf "Executing SQL: %s" msg)) // log SqlProvider queries
    
     let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info
@@ -87,5 +81,5 @@ let main argv =
     }
 
     globalLog.Info "Starting server"
-    startWebServer config (handleRequest createRequestContext)
+    startWebServer config (handleRequest globalLog)
     0 // exit code

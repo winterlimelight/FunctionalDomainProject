@@ -2,7 +2,6 @@ module AmApi.Commands.Template
 
 open AmApi
 open AmApi.Railway
-open AmApi.DomainInterfaces
 
 type TemplateCommand =
     | Create of DomainTypes.Template
@@ -12,9 +11,6 @@ type TemplateCommandError =
     | InvalidTemplate of string
     | DuplicateId
 
-type ITemplateCommandHandler =
-    abstract Execute: TemplateCommand -> ITemplateWriteRepository -> Result<unit,TemplateCommandError>
-
 let IsValid (template: DomainTypes.Template) =
     match template with
     | { Fields = f } when isNull (box f) -> Failure (InvalidTemplate "Template must include a list")
@@ -23,24 +19,21 @@ let IsValid (template: DomainTypes.Template) =
     | _ -> Success ()
     //TODO validate field ids (must be globally unique) - will require template read repo.
 
-let TemplateCommandHandler = {
-    new ITemplateCommandHandler with
-        member this.Execute (cmd: TemplateCommand) (repo: ITemplateWriteRepository) =
-            match cmd with
+let Execute findById saveTemplate (cmd: TemplateCommand) =
+    match cmd with
 
-            | Create(template) ->
-                railway {
-                    do! IsValid template
+    | Create(template) ->
+        railway {
+            do! IsValid template
 
-                    let foundTemplate = repo.FindById template.Id
-                    let! isDuplicate =
-                        match foundTemplate with 
-                        | Some _ -> Failure DuplicateId
-                        | None -> Success ()
+            let foundTemplate = findById template.Id
+            let! isDuplicate =
+                match foundTemplate with 
+                | Some _ -> Failure DuplicateId
+                | None -> Success ()
 
-                    repo.Save template
-                    return! Success ()
-                }
+            saveTemplate template
+            return! Success ()
+        }
 
-            | Update(template) -> Success ()
-}
+    | Update(template) -> Success ()

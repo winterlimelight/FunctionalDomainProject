@@ -1,7 +1,6 @@
 ﻿module AmApi.UnitTests.Template
 
 open AmApi
-open AmApi.DomainInterfaces
 open AmApi.Commands.Template
 open NUnit.Framework
 open FsUnit
@@ -9,19 +8,14 @@ open FsUnit
 let basicTemplate() : DomainTypes.Template = { 
     Id = System.Guid.NewGuid()
     Name = "templateName"
-    Fields = [{ Id =  System.Guid.NewGuid(); Name = "strFieldName"; Field = DomainTypes.StringField("strFieldValue") }] 
+    Fields = [{ Id = System.Guid.NewGuid(); Name = "strFieldName"; Field = DomainTypes.StringField("strFieldValue") }] 
     MaintenanceProgramId = None
 }
 
-let emptyRepo = { new ITemplateWriteRepository with
-    member this.FindById id = None
-    member this.Save (template: DomainTypes.Template) = ()
-}
-
-let templateExistsRepo = { new ITemplateWriteRepository with
-    member this.FindById id = Some({basicTemplate() with Id = id})
-    member this.Save (template: DomainTypes.Template) = ()
-}
+// Persistence layer stubs
+let findByIdEmptyRepo id = None
+let findByIdExisting id = Some({basicTemplate() with Id = id})
+let saveToEmptyRepo (template: DomainTypes.Template) = ()
 
 type CreateTemplateValidationData = { Tpl: DomainTypes.Template; Expected: Railway.Result<unit,TemplateCommandError> }
 let CreateTemplateValidationData1 = 
@@ -39,5 +33,5 @@ let CreateTemplateValidationData1 =
 [<TestCaseSource("CreateTemplateValidationData1")>]
 let ``Create template validation`` (data: CreateTemplateValidationData) =
     let cmd = TemplateCommand.Create(data.Tpl)
-    let result : Railway.Result<unit,TemplateCommandError> = TemplateCommandHandler.Execute cmd emptyRepo
+    let result : Railway.Result<unit,TemplateCommandError> = AmApi.Commands.Template.Execute findByIdEmptyRepo saveToEmptyRepo cmd
     result |> should equal data.Expected

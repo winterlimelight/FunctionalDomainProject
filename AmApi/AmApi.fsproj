@@ -66,12 +66,13 @@
     <Compile Include="Util.fs" />
     <Compile Include="Railway.fs" />
     <Compile Include="DomainTypes.fs" />
-    <Compile Include="DomainInterfaces.fs" />
     <Compile Include="Commands\Asset.fs" />
     <Compile Include="Commands\Template.fs" />
     <Compile Include="Operations\Asset.fs" />
     <Compile Include="Operations\Template.fs" />
-    <Compile Include="Persistence\Persistence.fs" />
+    <Compile Include="Persistence\Store.fs" />
+    <Compile Include="Persistence\Template.fs" />
+    <Compile Include="Persistence\Asset.fs" />
     <Compile Include="Api\Path.fs" />
     <Compile Include="Api\Common.fs" />
     <Compile Include="Api\AssetController.fs" />
