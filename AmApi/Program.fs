@@ -51,7 +51,10 @@ let route dc =
         pathScan Assets.assetById (fun guid -> 
             choose [
                 GET >=> readGuid (ApiMethods.getAsset dc) guid
-                PUT >=> readJson (fun json -> readGuid ((ApiMethods.updateAsset dc) json) guid) //TODO write this nicely? |> ?
+                PUT >=> readJson (fun json -> 
+                    let updateAsset = ApiMethods.updateAsset dc <| json // <| Passes the result of the expression on the right to the function on left.
+                    readGuid updateAsset guid
+                )
         ])
         
         NOT_FOUND "No handler found"
