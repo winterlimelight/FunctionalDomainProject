@@ -1,6 +1,6 @@
 ﻿source https://nuget.org/api/v2
-nuget Suave
-nuget Suave.Experimental
+nuget Suave >= 2.0.0
+nuget Suave.Experimental >= 2.0.0
 nuget SQLProvider
 nuget Newtonsoft.Json
 nuget FsUnit

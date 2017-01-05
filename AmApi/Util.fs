@@ -3,8 +3,8 @@ open System
 open System.Collections
 open System.Collections.Generic
 
-type _Logger() = 
-    let log = new System.Diagnostics.TraceSource("Log")
+type _Logger(name:string) = 
+    let log = new System.Diagnostics.TraceSource(name)
 
     let _log (eventType:Diagnostics.TraceEventType) (msg:string) =
         log.TraceEvent(eventType, 0, (sprintf "%s: %s" (DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff K")) msg))
@@ -28,20 +28,22 @@ type _Logger() =
                                 | Suave.Logging.LogLevel.Fatal   -> Diagnostics.TraceEventType.Critical
         _log traceEventType msg
 
-let Logger = _Logger() //TODO remove and use the one in the context object.
+let Logger = _Logger("Default") //TODO remove and use the one in the context object.
 
 
-type SuaveLoggerAdapter() =
-    let _log (msg:Suave.Logging.Message) = 
+type SuaveLoggerAdapter(name:string) =
+    let suaveLogName = [|name|]
+
+    let _log (msgFactory:Suave.Logging.LogLevel->Suave.Logging.Message) (level:Suave.Logging.LogLevel) =
         use strWriter = new System.IO.StringWriter()
-        let txt = Suave.Logging.TextWriterTarget(Suave.Logging.LogLevel.Verbose, strWriter) :> Suave.Logging.Logger
-        txt.logSimple msg
-        Logger.SuaveLog (strWriter.ToString()) msg.level
+        let txt = Suave.Logging.TextWriterTarget(suaveLogName, Suave.Logging.LogLevel.Verbose, strWriter) :> Suave.Logging.Logger
+        txt.log level msgFactory |> ignore
+        Logger.SuaveLog (strWriter.ToString()) level
 
     interface Suave.Logging.Logger with
-        member __.logSimple msg = _log msg
-        member __.log level msgFactory = _log (msgFactory level)
-        member __.logWithAck level msgFactory = async { do _log (msgFactory level) }
+        member __.name = suaveLogName
+        member __.log level msgFactory = async { do _log msgFactory level }
+        member __.logWithAck level msgFactory = async { do _log msgFactory level }
 
 
 [<AbstractClass>]

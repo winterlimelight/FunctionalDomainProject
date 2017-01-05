@@ -65,18 +65,19 @@ let handleRequest (globalLog:_Logger) : WebPart<HttpContext> =
         globalLog.Info (sprintf "Request: %O\r\n rawForm: %s" httpContext.request.url (System.Text.Encoding.UTF8.GetString httpContext.request.rawForm))
         let dc = Store.Sql.GetDataContext()
         return! httpContext |> (
-            route dc
+            route dc //TODO inject logger
         )
     }    
 
 [<EntryPoint>]
 let main argv = 
 
-    let globalLog = _Logger()
+    let globalLogName = "Log"
+    let globalLog = _Logger(globalLogName)
     FSharp.Data.Sql.Common.QueryEvents.SqlQueryEvent.Add (fun msg -> globalLog.Debug (sprintf "Executing SQL: %s" msg)) // log SqlProvider queries
    
-    let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info
-    let logger = Suave.Logging.CombiningTarget([ defaultLog; Util.SuaveLoggerAdapter() ])
+    let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info [|"SuaveDefaultStyle"|]
+    let logger = Suave.Logging.CombiningTarget([|"ProgramCombiningTarget"|], [ defaultLog; Util.SuaveLoggerAdapter(globalLogName) ])
 
     let config = { defaultConfig with 
                     bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" 5000 ]

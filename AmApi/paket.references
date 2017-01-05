@@ -1,3 +1,7 @@
-﻿FSharpx.Collections
+﻿Suave
+Suave.Experimental
+FSharpx.Async
+FSharpx.Collections
+FSharpx.Extras
 SQLProvider
 Newtonsoft.Json
