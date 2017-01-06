@@ -7,3 +7,7 @@ paket-files/
 AmApi.UnitTests/bin/
 AmApi.UnitTests/obj/
 AmApi.UnitTests/TestResult.xml
+build/
+deploy/
+.fake/
+.vs/

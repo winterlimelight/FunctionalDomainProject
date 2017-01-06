@@ -1,5 +1,6 @@
 NUGET
   remote: https://www.nuget.org/api/v2
+    FAKE (4.48)
     FSharp.Control.AsyncSeq (2.0.10)
     FSharp.Core (4.0.0.1)
     FSharpx.Async (1.13)
