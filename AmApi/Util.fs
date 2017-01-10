@@ -28,27 +28,17 @@ type _Logger(name:string) =
                                 | Suave.Logging.LogLevel.Fatal   -> Diagnostics.TraceEventType.Critical
         _log traceEventType msg
 
-let Logger = _Logger("Default") //TODO remove and use the one in the context object.
 
-
-type SuaveLoggerAdapter(name:string) =
-    let suaveLogName = [|name|]
+type SuaveLoggerAdapter(logger:_Logger) =
+    let suaveLogName = [||]
 
     let _log (msgFactory:Suave.Logging.LogLevel->Suave.Logging.Message) (level:Suave.Logging.LogLevel) =
         use strWriter = new System.IO.StringWriter()
         let txt = Suave.Logging.TextWriterTarget(suaveLogName, Suave.Logging.LogLevel.Verbose, strWriter) :> Suave.Logging.Logger
         txt.log level msgFactory |> ignore
-        Logger.SuaveLog (strWriter.ToString()) level
+        logger.SuaveLog (strWriter.ToString()) level
 
     interface Suave.Logging.Logger with
         member __.name = suaveLogName
         member __.log level msgFactory = async { do _log msgFactory level }
         member __.logWithAck level msgFactory = async { do _log msgFactory level }
-
-
-[<AbstractClass>]
-type BaseTestData() =
-    abstract member data: seq<obj[]>
-    interface IEnumerable<obj[]> with 
-        member this.GetEnumerator() : IEnumerator<obj[]> = this.data.GetEnumerator()
-        member this.GetEnumerator() : IEnumerator = this.data.GetEnumerator() :> IEnumerator

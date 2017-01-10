@@ -37,13 +37,13 @@ let readGuid fSuccess id =
     | false -> BAD_REQUEST (sprintf "%s is not a guid" id)
 
 
-let route dc =
+let route logger dc =
     choose [
         path Assets.template >=> choose [
-            PUT >=> readJson (ApiMethods.createTemplate dc)
+            PUT >=> readJson (ApiMethods.createTemplate logger dc)
         ]
         path Assets.asset >=> choose [
-            PUT >=> readJson (ApiMethods.createAsset dc)
+            PUT >=> readJson (ApiMethods.createAsset logger dc)
         ]
 
         pathScan Assets.templateById (readGuid (ApiMethods.getTemplate dc))
@@ -52,7 +52,7 @@ let route dc =
             choose [
                 GET >=> readGuid (ApiMethods.getAsset dc) guid
                 PUT >=> readJson (fun json -> 
-                    let updateAsset = ApiMethods.updateAsset dc <| json // <| Passes the result of the expression on the right to the function on left.
+                    let updateAsset = ApiMethods.updateAsset logger dc <| json // <| Passes the result of the expression on the right to the function on left.
                     readGuid updateAsset guid
                 )
         ])
@@ -65,23 +65,23 @@ let handleRequest (globalLog:_Logger) : WebPart<HttpContext> =
         globalLog.Info (sprintf "Request: %O\r\n rawForm: %s" httpContext.request.url (System.Text.Encoding.UTF8.GetString httpContext.request.rawForm))
         let dc = Store.Sql.GetDataContext()
         return! httpContext |> (
-            route dc //TODO inject logger
+            route globalLog dc
         )
     }    
 
 [<EntryPoint>]
 let main argv = 
 
-    let globalLogName = "Log"
+    let globalLogName = "GlobalLog"
     let globalLog = _Logger(globalLogName)
     FSharp.Data.Sql.Common.QueryEvents.SqlQueryEvent.Add (fun msg -> globalLog.Debug (sprintf "Executing SQL: %s" msg)) // log SqlProvider queries
-   
-    let defaultLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info [|"SuaveDefaultStyle"|]
-    let logger = Suave.Logging.CombiningTarget([|"ProgramCombiningTarget"|], [ defaultLog; Util.SuaveLoggerAdapter(globalLogName) ])
+
+    let consoleLog = Suave.Logging.Targets.create Suave.Logging.LogLevel.Info [||]
+    let suaveLog = Util.SuaveLoggerAdapter(globalLog)
 
     let config = { defaultConfig with 
                     bindings = [ HttpBinding.createSimple HTTP "127.0.0.1" 5000 ]
-                    logger = logger
+                    logger = Suave.Logging.CombiningTarget([||], [consoleLog; suaveLog])
     }
 
     globalLog.Info "Starting server"

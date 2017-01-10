@@ -10,9 +10,9 @@ module Operations =
 
 module ApiMethods =
     let getTemplate dc = Api.Template.getTemplate (Operations.getTemplate dc)
-    let createTemplate dc = Api.Template.createTemplate (Commands.executeTemplateCommand dc)
+    let createTemplate logger dc = Api.Template.createTemplate logger (Commands.executeTemplateCommand dc)
     let getAsset dc = Api.Asset.getAsset (Operations.getAsset dc)
-    let createAsset dc = Api.Asset.createAsset (Commands.executeAssetCommand dc)
-    let updateAsset dc = Api.Asset.updateAsset (Commands.executeAssetCommand dc)
+    let createAsset logger dc = Api.Asset.createAsset logger (Commands.executeAssetCommand dc)
+    let updateAsset logger dc = Api.Asset.updateAsset logger (Commands.executeAssetCommand dc)
     
 

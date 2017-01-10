@@ -12,26 +12,26 @@ open AmApi.Commands.Asset
 open AmApi.Operations.Asset
 open AmApi.Persistence
 
-let private saveAsset executeAssetCommand cmd onSuccess =
+let private saveAsset (logger:_Logger) executeAssetCommand cmd onSuccess =
     let result = executeAssetCommand cmd
     match result with
     | Failure (err: AssetCommandError) ->
-        Logger.Warn (sprintf "AssetController.Create error: %A" err)
+        logger.Warn (sprintf "AssetController.Create error: %A" err)
         match err with
         | DuplicateId -> CONFLICT (sprintf "%A" err)
         | NotFound -> NOT_FOUND ""
         | _ -> BAD_REQUEST (sprintf "%A" err)
     | Success _ -> onSuccess
 
-let createAsset executeAssetCommand (asset:DomainTypes.Asset) =
-    saveAsset executeAssetCommand (AssetCommand.Create(asset)) 
+let createAsset logger executeAssetCommand (asset:DomainTypes.Asset) =
+    saveAsset logger executeAssetCommand (AssetCommand.Create(asset)) 
     <| CREATED (sprintf Path.Assets.assetById (string asset.Id))
 
-let updateAsset executeAssetCommand (asset:DomainTypes.Asset) (id:Guid) =
+let updateAsset logger executeAssetCommand (asset:DomainTypes.Asset) (id:Guid) =
     if asset.Id <> id then 
         (BAD_REQUEST "Url parameter and asset id must match")
     else
-        saveAsset executeAssetCommand (AssetCommand.Update(asset)) 
+        saveAsset logger executeAssetCommand (AssetCommand.Update(asset)) 
         <| OK ""
 
 let getAsset getAssetById (id:Guid) =
