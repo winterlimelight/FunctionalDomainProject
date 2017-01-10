@@ -8,3 +8,4 @@ nuget FSharpx.Async
 nuget FSharpx.Collections
 nuget FSharpx.Extras
 nuget FAKE
+nuget MySql.Data

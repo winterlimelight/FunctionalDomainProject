@@ -1,5 +1,6 @@
 ﻿module AmApi.Persistence.Template
 
+open System
 open System.Transactions
 open FSharp.Data.Sql
 open Microsoft.FSharp.Linq
@@ -8,36 +9,38 @@ open AmApi.DomainTypes
 open AmApi.Store
 
 
-type private TemplateQueryResultSet = DbContext.``dbo.TemplateEntity`` * DbContext.``dbo.FieldDefinitionEntity`` * DbContext.``dbo.FieldValueEntity``
+type private TemplateQueryResultSet = DbContext.``AssetManager.TemplateEntity`` * DbContext.``AssetManager.FieldDefinitionEntity`` * DbContext.``AssetManager.FieldValueEntity``
 
 let private mapSingleTemplate (rows:TemplateQueryResultSet list) : Template =
     let fields = [ for row in rows do
                     let (_, defn, value) = row
-                    if defn.FieldDefinitionId <> System.Guid.Empty then // empty guid means template has no fields
+                    let abc = defn.FieldDefinitionId
+                    let fieldDefnId = Guid.Parse(abc)
+                    if fieldDefnId <> Guid.Empty then // empty guid means template has no fields
                         yield {
-                            Id = defn.FieldDefinitionId
+                            Id = fieldDefnId
                             Name = defn.Name
                             Field = match value.ValueType with
-                                    | 1uy -> StringField(value.StringValue.Value)
-                                    | 2uy -> DateField(value.DateValue.Value)
-                                    | 3uy -> NumericField(float value.NumericValue.Value)
+                                    | 1y -> StringField(value.StringValue.Value)
+                                    | 2y -> DateField(value.DateValue.Value)
+                                    | 3y -> NumericField(float value.NumericValue.Value)
                                     | _ -> failwith "Unknown field type"
                         }]
     let (templateCols, _, _) = rows.Head
     {
-        Id = templateCols.TemplateId
+        Id = Guid.Parse(templateCols.TemplateId)
         Name = templateCols.Name
         Fields = fields
-        MaintenanceProgramId = templateCols.MaintenanceProgramId
+        MaintenanceProgramId = Option.map Guid.Parse templateCols.MaintenanceProgramId
     }
 
-let private templateByIdQuery (dc:DbContext) id : System.Linq.IQueryable<TemplateQueryResultSet> =
+let private templateByIdQuery (dc:DbContext) (id:Guid) : System.Linq.IQueryable<TemplateQueryResultSet> =
     query { 
-        for template in dc.Dbo.Template do
+        for template in dc.AssetManager.Template do
         // (!!) means left outer join
-        for fieldDef in (!!) template.``dbo.FieldDefinition by TemplateId`` do
-        for fieldVal in (!!) fieldDef.``dbo.FieldValue by FieldDefinitionId`` do
-        where (template.TemplateId = id && fieldVal.AssetId.IsNone)
+        for fieldDef in (!!) template.``AssetManager.FieldDefinition by TemplateId`` do
+        for fieldVal in (!!) fieldDef.``AssetManager.FieldValue by FieldDefinitionId`` do
+        where (template.TemplateId = (string id) && fieldVal.AssetId.IsNone)
         select (template, fieldDef, fieldVal)
     }
 
@@ -65,25 +68,25 @@ module TemplateWriteRepo =
             dc.SubmitUpdates()
 
         // add new template
-        let mutable newTemplate = dc.Dbo.Template.Create(template.Name)
-        newTemplate.TemplateId <- template.Id
-        newTemplate.MaintenanceProgramId <- template.MaintenanceProgramId
+        let mutable newTemplate = dc.AssetManager.Template.Create(template.Name)
+        newTemplate.TemplateId <- string template.Id
+        newTemplate.MaintenanceProgramId <- Option.map string template.MaintenanceProgramId
         dc.SubmitUpdates()
 
         // add field definitions
         template.Fields 
         |> List.iter (fun field -> 
-            let mutable newDefn = dc.Dbo.FieldDefinition.Create(field.Name, template.Id) 
-            newDefn.FieldDefinitionId <- field.Id
+            let mutable newDefn = dc.AssetManager.FieldDefinition.Create(field.Name, (string template.Id)) 
+            newDefn.FieldDefinitionId <- string field.Id
             dc.SubmitUpdates()
 
-            let mutable newValue = dc.Dbo.FieldValue.Create(field.Id, 0uy)
-            newValue.FieldValueId <- System.Guid.NewGuid()
-            newValue.FieldDefinitionId <- field.Id
+            let mutable newValue = dc.AssetManager.FieldValue.Create(string field.Id, 0y)
+            newValue.FieldValueId <- string (Guid.NewGuid())
+            newValue.FieldDefinitionId <- string field.Id
             newValue.ValueType <- match field.Field with
-                                    | StringField s -> newValue.StringValue <- Some s; 1uy
-                                    | DateField d -> newValue.DateValue <- Some d; 2uy
-                                    | NumericField n -> newValue.NumericValue <- Some (float32 n); 3uy
+                                    | StringField s -> newValue.StringValue <- Some s; 1y
+                                    | DateField d -> newValue.DateValue <- Some d; 2y
+                                    | NumericField n -> newValue.NumericValue <- Some (float32 n); 3y
         )
 
         dc.SubmitUpdates()
